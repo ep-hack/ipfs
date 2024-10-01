@@ -20,13 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       throw new Error(`Failed to load CID file: ${response.statusText}`);
     }
     BASE_CID = await response.text();
-    BASE_CID = BASE_CID.trim(); // Ensure there are no extra spaces or line breaks
-
-    // Proceed with initializing Helia and loading content
-    const helia = window.helia = await instantiateHeliaNode();
-    window.heliaFs = await HeliaUnixfs.unixfs(helia);
-  
-
+    BASE_CID = BASE_CID.trim(); 
   
   const helia = window.helia = await instantiateHeliaNode();
   window.heliaFs = await HeliaUnixfs.unixfs(helia);
