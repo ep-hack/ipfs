@@ -1,6 +1,18 @@
 /* global Helia, BlockstoreCore, DatastoreCore, HeliaUnixfs */
 
-const BASE_CID = "bafybeibrsaijpk6smg6cgvrpywhhewtene6uhyhfa7stw45l6s7sr5vcye"; // Base CID
+let BASE_CID = ''; // Initially unset, will be fetched from the file
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Fetch BASE_CID from the src/cid.txt file
+  try {
+    const response = await fetch('src/cid.txt');
+    if (!response.ok) {
+      throw new Error(`Failed to load CID file: ${response.statusText}`);
+    }
+    BASE_CID = await response.text();
+    BASE_CID = BASE_CID.trim();
+
+
 const AUTO_ANSWER_CID = `${BASE_CID}/ep-uncum-auto-answer.user.js`; // Replace with the actual CID of auto-answer.user.js
 
 const statusValueEl = document.getElementById('statusValue');
