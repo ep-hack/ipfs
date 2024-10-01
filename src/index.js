@@ -1,24 +1,6 @@
 /* global Helia, BlockstoreCore, DatastoreCore, HeliaUnixfs */
 
-let BASE_CID = ''; // Initially unset, will be fetched from the file
-
-async function loadBaseCid() {
-  // Fetch BASE_CID from the src/cid.txt file
-  try {
-    const response = await fetch('src/cid.txt');
-    if (!response.ok) {
-      throw new Error(`Failed to load CID file: ${response.statusText}`);
-    }
-    const cid = await response.text();
-    BASE_CID = cid.trim(); // Ensure there are no extra spaces or line breaks
-    console.log(`Loaded BASE_CID: ${BASE_CID}`);
-  } catch (error) {
-    console.error('Error fetching BASE_CID:', error);
-    throw new Error(`Error loading BASE_CID: ${error.message}`);
-  }
-}
-
-await loadBaseCid();
+let BASE_CID = ''; 
 
 const AUTO_ANSWER_CID = `${BASE_CID}/ep-uncum-auto-answer.user.js`; // Replace with the actual CID of auto-answer.user.js
 
@@ -31,6 +13,21 @@ const nodeIdEl = document.getElementById('nodeId');
 const contentDisplayEl = document.getElementById('contentDisplay'); // Display area for content
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Fetch BASE_CID from the src/cid.txt file
+  
+    const response = await fetch('src/cid.txt');
+    if (!response.ok) {
+      throw new Error(`Failed to load CID file: ${response.statusText}`);
+    }
+    BASE_CID = await response.text();
+    BASE_CID = BASE_CID.trim(); // Ensure there are no extra spaces or line breaks
+
+    // Proceed with initializing Helia and loading content
+    const helia = window.helia = await instantiateHeliaNode();
+    window.heliaFs = await HeliaUnixfs.unixfs(helia);
+  
+
+  
   const helia = window.helia = await instantiateHeliaNode();
   window.heliaFs = await HeliaUnixfs.unixfs(helia);
 
