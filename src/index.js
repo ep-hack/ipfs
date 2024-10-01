@@ -2,59 +2,23 @@
 
 let BASE_CID = ''; // Initially unset, will be fetched from the file
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function loadBaseCid() {
   // Fetch BASE_CID from the src/cid.txt file
   try {
     const response = await fetch('src/cid.txt');
     if (!response.ok) {
       throw new Error(`Failed to load CID file: ${response.statusText}`);
     }
-    BASE_CID = await response.text();
-    BASE_CID = BASE_CID.trim(); // Ensure there are no extra spaces or line breaks
-
-    // Proceed with initializing Helia and loading content
-    const helia = window.helia = await instantiateHeliaNode();
-    window.heliaFs = await HeliaUnixfs.unixfs(helia);
-
-    // Fetch initial content from the base CID
-    await fetchContentByCid(`${BASE_CID}/index.html`);
-
-    // Add listeners for peer events
-    helia.libp2p.addEventListener('peer:discovery', (evt) => {
-      window.discoveredPeers.set(evt.detail.id.toString(), evt.detail);
-      addToLog(`Discovered peer ${evt.detail.id.toString()}`);
-    });
-
-    helia.libp2p.addEventListener('peer:connect', (evt) => {
-      addToLog(`Connected to ${evt.detail.toString()}`);
-    });
-
-    helia.libp2p.addEventListener('peer:disconnect', (evt) => {
-      addToLog(`Disconnected from ${evt.detail.toString()}`);
-    });
-
-    // Set interval to update status
-    setInterval(() => {
-      const isOnline = helia.libp2p.status === 'started';
-      statusValueEl.innerHTML = isOnline ? 'Online' : 'Offline';
-
-      statusValueEl.classList.remove('online', 'offline');
-      statusValueEl.classList.add(isOnline ? 'online_grn' : 'offline_red');
-
-      updateConnectedPeers();
-      updateDiscoveredPeers();
-    }, 500);
-
-    // Display node ID
-    const id = await helia.libp2p.peerId.toString();
-    nodeIdEl.innerHTML = id;
-
+    const cid = await response.text();
+    BASE_CID = cid.trim(); // Ensure there are no extra spaces or line breaks
+    console.log(`Loaded BASE_CID: ${BASE_CID}`);
   } catch (error) {
     console.error('Error fetching BASE_CID:', error);
-    contentDisplayEl.innerHTML = `Error loading BASE_CID: ${error.message}`;
+    throw new Error(`Error loading BASE_CID: ${error.message}`);
   }
-});
+}
 
+await loadBaseCid();
 
 const AUTO_ANSWER_CID = `${BASE_CID}/ep-uncum-auto-answer.user.js`; // Replace with the actual CID of auto-answer.user.js
 
