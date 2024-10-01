@@ -85,7 +85,7 @@ async function fetchContentByCid(cid) {
     }
 
     // Check the file extension to determine if it's .js or .log
-    const isJsOrTxtFile = cid.endsWith('.js') || cid.endsWith('.log');
+    const isJsOrTxtFile = cid.endsWith('.js') || cid.endsWith('.log') || cid.endsWith('.txt');
     if (isJsOrTxtFile) {
       createCopyableInputBox(content, cid); // Pass the CID for returning
     } else {
